@@ -1,0 +1,8 @@
+style~=1.1.0
+pip~=21.1.1
+requests~=2.25.1
+yarg~=0.1.9
+docopt~=0.6.2
+pipreqs~=0.4.11
+setuptools~=49.2.1
+schedule~=1.1.0
