@@ -1,0 +1,63 @@
+import smtplib
+import ssl
+from schedule import every, run_pending
+import time
+import csv
+
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import logging
+
+logger = logging.getLogger(name="General")
+logger.setLevel(level=logging.INFO) #Because its '.INFO' it will only log things that have a higher level than info.
+filer = logging.FileHandler("Email.log")
+logger.addHandler(filer)
+formatter = logging.Formatter(('%(asctime)s:%(filename)s:%(funcName)s:%(levelname)s:%(message)s')) #This formats what information is added to the logger. To see the full list of availibe attributes, open your word doc and check the link.
+filer.setFormatter(formatter) #you need to add this in order to link the formatter to your logger
+
+def send_emails():
+        #list of recipients 
+        email_list = ["bladeb@me.com","c.spee@hotmail.com","bladedonovanbrink@gmail.com"]
+        # Connect to the Outlook.com SMTP server
+        server = smtplib.SMTP('smtp-mail.outlook.com',587)
+        server.starttls()
+
+        # Login to the Hotmail account
+        server.login('BrainNest_Project_C1@outlook.com', 'ProjectC12023')
+
+        for i in email_list:
+            try:
+                logger.info(msg= f'Email sent to {i}',exc_info=True)
+                # Compose the email message
+                message = MIMEMultipart("Please see report attached.")
+                message["Subject"] = "Test Email"
+                message["From"] = 'BrainNest_Project_C1@outlook.com'
+                message["To"] = f'{i}'
+
+                # Create the attachment
+                with open("report.pdf", "rb") as file:
+                        # Add file as application/octet-stream
+                        attachment = MIMEBase("application", "octet-stream")
+                        attachment.set_payload(file.read())
+                        encoders.encode_base64(attachment)
+                        attachment.add_header('Content-Disposition', 'attachment', filename="file.pdf")
+
+
+                # Attach the attachment to the message
+                message.attach(attachment)
+
+                # Send the email
+                server.send_message(message)
+
+            # Disconnect from the server
+                
+            except:
+                    logger.info(msg= f'unable to send email to {i}',exc_info=True)
+        server.quit()
+
+every().day.at("12:21").do(send_emails)
+while True:
+    run_pending()
+    time.sleep(1)
