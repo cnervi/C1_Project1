@@ -31,18 +31,18 @@ def send_emails():
             try:
                 logger.info(msg= f'Email sent to {i}',exc_info=True)
                 # Compose the email message
-                message = MIMEMultipart("This is a test email sent through the Outlook.com SMTP server.")
+                message = MIMEMultipart("Please see report attached.")
                 message["Subject"] = "Test Email"
                 message["From"] = 'BrainNest_Project_C1@outlook.com'
                 message["To"] = f'{i}'
 
                 # Create the attachment
-                with open("note.txt", "rb") as file:
+                with open("report.pdf", "rb") as file:
                         # Add file as application/octet-stream
                         attachment = MIMEBase("application", "octet-stream")
                         attachment.set_payload(file.read())
                         encoders.encode_base64(attachment)
-                        attachment.add_header('Content-Disposition', 'attachment', filename="file.txt")
+                        attachment.add_header('Content-Disposition', 'attachment', filename="file.pdf")
 
 
                 # Attach the attachment to the message
@@ -57,7 +57,7 @@ def send_emails():
                     logger.info(msg= f'unable to send email to {i}',exc_info=True)
         server.quit()
 
-every().day.at("12:08").do(send_emails)
+every().day.at("12:21").do(send_emails)
 while True:
     run_pending()
     time.sleep(1)
